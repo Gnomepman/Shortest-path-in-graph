@@ -3,7 +3,7 @@
 #include "QGraphicsTextItem"
 #include "QListWidget"
 
-//можем контролировать радиус вершины и радиус в т.н. уравнении круга
+//can control radius of vertices and distance between them
 #define ellipseRadius 30
 #define radius 120
 
@@ -32,7 +32,7 @@ MainWindow::MainWindow(QWidget *parent)
     scene->clearFocus();
     ui->graphicsView->setScene(scene);
     ui->graphicsView->setSizePolicy(QSizePolicy::Ignored,QSizePolicy::Ignored);
-    ui->graphicsView->setRenderHint(QPainter::Antialiasing);//сглаживание в сцене (кайф)
+    ui->graphicsView->setRenderHint(QPainter::Antialiasing);
 
     graypen.setWidth(3);
 
@@ -57,7 +57,6 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-//функция для построения вершин
 void MainWindow::paintVerticies(int numberOfverticies){
     if (numberOfverticies==0)
         return;
@@ -103,7 +102,6 @@ void MainWindow::on_pushButton_2_clicked()
     edges.clear();
     scene->clear();
 
-    //проходим по таблице, запоминаем связи между вершинами
     for(int i=0; i<ui->tableSum->rowCount(); ++i){
         for(int j=0; j<ui->tableSum->rowCount(); ++j){
             if(ui->tableSum->item(i,j)->text()!="0" && ui->tableSum->item(i,j)->text()!="∞"){
@@ -114,7 +112,6 @@ void MainWindow::on_pushButton_2_clicked()
             }
         }
     }
-    //для каждой связи в векторе, строим рёбра
     for (Connections item : edges) {
         if(item.first==item.second){
             scene->addEllipse(radius*cos(item.first)-5,radius*sin(item.second)-5,ellipseRadius+5,ellipseRadius+5,bluepenDot);
@@ -122,15 +119,14 @@ void MainWindow::on_pushButton_2_clicked()
             printArrowedEdge(item.first,item.second,bluepen);
         }
     }
-    //после рёбер строим поверх вершины
     paintVerticies(ui->tableSum->columnCount());
 }
 
 void MainWindow::printArrowedEdge(int first, int second, QPen pen){
-    float x1=radius*cos(first)+ellipseRadius/2,//7
-            y1=radius*sin(first)+ellipseRadius/2,//3
-            x2=radius*cos(second)+ellipseRadius/2,//7
-            y2=radius*sin(second)+ellipseRadius/2;//3
+    float x1=radius*cos(first)+ellipseRadius/2,
+            y1=radius*sin(first)+ellipseRadius/2,
+            x2=radius*cos(second)+ellipseRadius/2,
+            y2=radius*sin(second)+ellipseRadius/2;
     float x, y;
     float f1x2 , f1y2;
     float lons, angle;
@@ -187,7 +183,7 @@ void MainWindow::on_pushButton_4_clicked()
 }
 
 //кратчайший путь из A в B (алгоритм Дейкстры)
-//сам алгоритм ищет кратчайший путь от точки до всех точек сразу
+//алгоритм ищет кратчайший путь от точки до всех точек сразу, тут мы на нужной вершине прерываем выполнение
 void MainWindow::on_pushButton_5_clicked()
 {
     usedVertices.clear();
@@ -261,9 +257,9 @@ void MainWindow::on_pushButton_5_clicked()
                 result += QString::number(begin+1) + "x -";
                 std::reverse(result.begin(),result.end());
             }
-            ui->labelResult->setText("Найк. шлях між x"
+            ui->labelResult->setText("Shortest path between x"
                                      + QString::number(begin+1)
-                                     + " та x" + QString::number(ui->spinBox_second->value())
+                                     + " and x" + QString::number(ui->spinBox_second->value())
                                      + " = " + QString::number(min) + "\n" + result);
             return;
         }
